@@ -90,7 +90,7 @@ __interrupt void Timer_A(void)
         // Blinking logic
         //
         // Assume 1MHz, overflow=~65mSecs, count=~46 overflows each 3secs)
-        // Every ~3 seconds (actual 46*65=2990 msecs)
+        // Every ~3 seconds (actual 46*65.535=3014 msecs)
         // Blink 5 times at about ~250mSecs each to aid visual confirmation
         overflowCount++;
         if (overflowCount >= BLINK_OVERFLOWS) {
@@ -104,6 +104,7 @@ __interrupt void Timer_A(void)
         }
 
         // Provide for LED2 to blink X=5 times at ~250mSec intervals
+        // This gets checked with each timer overflow (~65 mSecs)
         if (led2IsBlinking == IS_BLINKING) {
             blinkHold++;
 
@@ -118,6 +119,7 @@ __interrupt void Timer_A(void)
                 // Blinks X=5 times (on and off)
                 if (blinkPhase >= 2*BLINK_COUNT) {
                     led2IsBlinking = 0;
+                    blinkPhase = 0;
 
                     // Make sure that LED2 off upon completion even though
                     //  it should already be off on the last toggle
